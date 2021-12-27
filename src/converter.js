@@ -9,9 +9,8 @@ const { MONGO_QUERY_OPERATOR } = require('./constants');
 
 const produceSQL = (input, removeUnderscoreBeforeID) => {
 	const { fromClausePrepared, queryStatements } = parseStructure(input.trim());
-	const { whereClausePrepared, selectClausePrepared, limitNumber } = parseStatements(
-		queryStatements.trim()
-	);
+	const { whereClausePrepared, selectClausePrepared, limitNumber } =
+		parseStatements(queryStatements.trim());
 
 	return buildSQL(
 		{
@@ -99,7 +98,9 @@ const parseStatements = (originalStatements) => {
 	const isLimitIncluded = originalStatements.includes('limit');
 	if (isLimitIncluded) {
 		const limitIndex = originalStatements.indexOf('limit');
-		limitNumber = originalStatements[limitIndex + 6];
+		const firstParan = originalStatements.indexOf('(', limitIndex);
+		const secondParan = originalStatements.indexOf(')', firstParan);
+		limitNumber = originalStatements.substring(firstParan + 1, secondParan);
 		originalStatements = originalStatements.replace(
 			`.limit(${limitNumber})`,
 			''
